@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/vault/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/keycloak/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/api-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/exam-service/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/user-service/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/config-server/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/eureka-server/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/course-service/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/approval-service/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/feedback-service/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/material-service/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/analytics-service/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/submission-service/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/certificate-service/pom.xml" />
+        <option value="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/notification-service/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="ms-17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
