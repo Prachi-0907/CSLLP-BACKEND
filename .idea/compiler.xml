@@ -14,7 +14,7 @@
         <module name="vault" />
         <module name="notification-service" />
       </profile>
-      <profile name="Annotation profile for approval-service" enabled="true">
+      <profile name="Annotation profile for course-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -24,7 +24,7 @@
         <module name="course-service" />
         <module name="approval-service" />
       </profile>
-      <profile name="Annotation profile for certificate-service" enabled="true">
+      <profile name="Annotation profile for submission-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
