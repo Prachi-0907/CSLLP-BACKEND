@@ -175,27 +175,27 @@ public class UserServiceImpl implements UserService {
         User u = userRepository.findByEmail(req.getEmail())
                 .orElseThrow(() -> new BadRequestException("Invalid credentials"));
 
+        // ✅ ADD THESE DEBUG LINES
+        System.out.println("=== LOGIN DEBUG ===");
+        System.out.println("Email found: " + u.getEmail());
+        System.out.println("DB Role: '" + u.getRole() + "'");
+        System.out.println("Request Role: '" + req.getRole() + "'");
+        System.out.println("DB Status: '" + u.getStatus() + "'");
+        System.out.println("BCrypt match: " + passwordEncoder.matches(req.getPassword(), u.getPassword()));
+        System.out.println("===================");
+
         if (!"ACTIVE".equalsIgnoreCase(u.getStatus()))
             throw new BadRequestException("User not active");
 
         if (!u.getRole().equalsIgnoreCase(req.getRole()))
             throw new BadRequestException("User does not have role: " + req.getRole());
 
-//        if (!passwordEncoder.matches(req.getPassword(), u.getPassword())) {
-//            throw new BadRequestException("Invalid credentials");
-//        }
-        boolean passwordMatches =
-                passwordEncoder.matches(req.getPassword(), u.getPassword())
-                        ||
-                        req.getPassword().equals(u.getPassword());
-
-        if (!passwordMatches) {
+        if (!passwordEncoder.matches(req.getPassword(), u.getPassword())) {
             throw new BadRequestException("Invalid credentials");
         }
 
         return u;
     }
-
     @Override
     public UserResponse getProfile(Long userId) {
         User u = getUserById(userId);
@@ -399,4 +399,6 @@ public class UserServiceImpl implements UserService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+
 }

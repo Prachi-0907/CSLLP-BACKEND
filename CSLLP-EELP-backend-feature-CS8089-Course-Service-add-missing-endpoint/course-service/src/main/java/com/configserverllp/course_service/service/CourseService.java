@@ -2,8 +2,10 @@ package com.configserverllp.course_service.service;
 
 import com.configserverllp.course_service.dto.CourseRequest;
 import com.configserverllp.course_service.dto.EnrollmentRequest;
+import com.configserverllp.course_service.dto.PagedResponse;
 import com.configserverllp.course_service.entity.Course;
 import com.configserverllp.course_service.entity.Enrollment;
+
 
 import java.util.List;
 import java.util.Map;
@@ -61,4 +63,12 @@ public interface CourseService {
     void checkAndSendProgressReminders();
     List<Map<String, Object>> getEnrollmentsNeedingReminders();
     void sendAutomaticReminderForEnrollment(Long enrollmentId);
+
+    PagedResponse<Course> getAllActiveCoursePaged(int page, int size, String sort);
+    PagedResponse<Course> getAllCoursesPaged(int page, int size, String sort);
+    PagedResponse<Course> searchCoursesPaged(String keyword, int page, int size, String sort);
+    PagedResponse<Course> getCoursesByCategoryPaged(String category, int page, int size, String sort);
+    PagedResponse<Course> getCoursesCreatedByPaged(Long createdBy, int page, int size, String sort);
+
+
 }

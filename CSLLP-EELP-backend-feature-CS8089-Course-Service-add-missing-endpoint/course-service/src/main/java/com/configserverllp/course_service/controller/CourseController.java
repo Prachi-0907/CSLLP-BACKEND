@@ -3,6 +3,7 @@ package com.configserverllp.course_service.controller;
 import com.configserverllp.course_service.dto.CourseRequest;
 import com.configserverllp.course_service.dto.CourseSearchResponse;
 import com.configserverllp.course_service.dto.EnrollmentRequest;
+import com.configserverllp.course_service.dto.PagedResponse;
 import com.configserverllp.course_service.entity.Course;
 import com.configserverllp.course_service.entity.Enrollment;
 import com.configserverllp.course_service.service.CourseService;
@@ -235,5 +236,58 @@ public class CourseController {
             return ResponseEntity.status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error("Failed to get system status: " + e.getMessage()));
         }
+    }
+
+    // Course Catalog - Active courses with pagination (Employee/Manager view)
+    @GetMapping("/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<Course>>> getAllActiveCoursePaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String sort) {
+        return ResponseEntity.ok(ApiResponse.success("Courses fetched",
+                courseService.getAllActiveCoursePaged(page, size, sort)));
+    }
+
+    // Admin - All courses with pagination
+    @GetMapping("/admin/all/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<Course>>> getAllCoursesForAdminPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String sort) {
+        return ResponseEntity.ok(ApiResponse.success("All courses fetched",
+                courseService.getAllCoursesPaged(page, size, sort)));
+    }
+
+    // Search with pagination
+    @GetMapping("/search/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<Course>>> searchCoursesPaged(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String sort) {
+        return ResponseEntity.ok(ApiResponse.success("Search results",
+                courseService.searchCoursesPaged(keyword, page, size, sort)));
+    }
+
+    // By category with pagination
+    @GetMapping("/category/{category}/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<Course>>> getCoursesByCategoryPaged(
+            @PathVariable String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String sort) {
+        return ResponseEntity.ok(ApiResponse.success("Courses by category fetched",
+                courseService.getCoursesByCategoryPaged(category, page, size, sort)));
+    }
+
+    // Created by user with pagination (Manager's courses tab)
+    @GetMapping("/created-by/{userId}/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<Course>>> getCreatedByPaged(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String sort) {
+        return ResponseEntity.ok(ApiResponse.success("Courses created by user fetched",
+                courseService.getCoursesCreatedByPaged(userId, page, size, sort)));
     }
 }
