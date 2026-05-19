@@ -21,6 +21,8 @@ public interface MaterialService {
     Resource loadFileAsResource(String relativePath);
     List<Material> getMaterialsByCourse(Long courseId);
 
+    // ADD one line after searchMaterialsByTag declaration:
+    List<Material> searchMaterials(String keyword);
 
 
 }
