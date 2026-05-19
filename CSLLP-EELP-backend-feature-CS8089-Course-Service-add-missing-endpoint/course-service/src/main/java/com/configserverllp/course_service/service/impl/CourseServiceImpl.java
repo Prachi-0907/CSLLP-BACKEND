@@ -2,6 +2,7 @@ package com.configserverllp.course_service.service.impl;
 
 import com.configserverllp.course_service.dto.CourseRequest;
 import com.configserverllp.course_service.dto.EnrollmentRequest;
+import com.configserverllp.course_service.dto.PagedResponse;
 import com.configserverllp.course_service.entity.Course;
 import com.configserverllp.course_service.entity.Enrollment;
 import com.configserverllp.course_service.exception.BadRequestException;
@@ -11,6 +12,10 @@ import com.configserverllp.course_service.repository.EnrollmentRepository;
 import com.configserverllp.course_service.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1027,5 +1032,65 @@ public class CourseServiceImpl implements CourseService {
         defaultInfo.put("managerId", null);
 
         return defaultInfo;
+    }
+
+    // Helper to build Pageable from params
+    private Pageable buildPageable(int page, int size, String sort) {
+        // sort format: "fieldName,asc" or "fieldName,desc" or just "fieldName"
+        String[] sortParts = (sort != null && !sort.isBlank()) ? sort.split(",") : new String[]{"createdAt", "desc"};
+        String sortField = sortParts[0].trim();
+        Sort.Direction direction = (sortParts.length > 1 && sortParts[1].trim().equalsIgnoreCase("asc"))
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
+        return PageRequest.of(page, size, Sort.by(direction, sortField));
+    }
+
+    // Helper to convert Page to PagedResponse
+    private <T> PagedResponse<T> toPagedResponse(Page<T> pageData) {
+        return PagedResponse.<T>builder()
+                .content(pageData.getContent())
+                .currentPage(pageData.getNumber())
+                .totalPages(pageData.getTotalPages())
+                .totalRecords(pageData.getTotalElements())
+                .pageSize(pageData.getSize())
+                .isFirst(pageData.isFirst())
+                .isLast(pageData.isLast())
+                .hasNext(pageData.hasNext())
+                .hasPrevious(pageData.hasPrevious())
+                .build();
+    }
+
+    @Override
+    public PagedResponse<Course> getAllActiveCoursePaged(int page, int size, String sort) {
+        Pageable pageable = buildPageable(page, size, sort);
+        Page<Course> result = courseRepository.findByStatus(Course.Status.ACTIVE, pageable);
+        return toPagedResponse(result);
+    }
+
+    @Override
+    public PagedResponse<Course> getAllCoursesPaged(int page, int size, String sort) {
+        Pageable pageable = buildPageable(page, size, sort);
+        Page<Course> result = courseRepository.findAll(pageable);
+        return toPagedResponse(result);
+    }
+
+    @Override
+    public PagedResponse<Course> searchCoursesPaged(String keyword, int page, int size, String sort) {
+        Pageable pageable = buildPageable(page, size, sort);
+        Page<Course> result = courseRepository.searchByKeywordPaged(keyword, pageable);
+        return toPagedResponse(result);
+    }
+
+    @Override
+    public PagedResponse<Course> getCoursesByCategoryPaged(String category, int page, int size, String sort) {
+        Pageable pageable = buildPageable(page, size, sort);
+        Page<Course> result = courseRepository.findByCategoryAndStatus(category, Course.Status.ACTIVE, pageable);
+        return toPagedResponse(result);
+    }
+
+    @Override
+    public PagedResponse<Course> getCoursesCreatedByPaged(Long createdBy, int page, int size, String sort) {
+        Pageable pageable = buildPageable(page, size, sort);
+        Page<Course> result = courseRepository.findByCreatedBy(createdBy, pageable);
+        return toPagedResponse(result);
     }
 }

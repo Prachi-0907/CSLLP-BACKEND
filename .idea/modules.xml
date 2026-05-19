@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Backend-CSLLP.iml" filepath="$PROJECT_DIR$/.idea/Backend-CSLLP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/material-service/material-service.iml" filepath="$PROJECT_DIR$/CSLLP-EELP-backend-feature-CS8089-Course-Service-add-missing-endpoint/material-service/material-service.iml" />
     </modules>
   </component>
 </project>
