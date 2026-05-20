@@ -203,15 +203,6 @@ public class MaterialServiceImpl implements MaterialService {
         return new FileSystemResource(filePath);
     }
 
-    @Override
-    public List<Material> searchMaterials(String keyword) {
-        return Optional.ofNullable(keyword)
-                .map(String::trim)
-                .filter(k -> !k.isEmpty())
-                .map(materialRepository::searchByKeyword)       // non-blank → DB search
-                .orElseGet(this::getAllMaterials);              // blank → all active materials
-    }
-
 
     @Data
     static class UserResponse {

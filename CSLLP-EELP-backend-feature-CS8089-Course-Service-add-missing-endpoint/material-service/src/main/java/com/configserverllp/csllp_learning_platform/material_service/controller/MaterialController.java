@@ -18,9 +18,7 @@ import org.springframework.http.MediaTypeFactory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -93,22 +91,10 @@ public class MaterialController {
     }
 
     // existing search
-//    @GetMapping("/search")
-//    public ResponseEntity<ApiResponse<List<Material>>> searchByTag(@RequestParam String keyword) {
-//        List<Material> list = materialService.searchMaterialsByTag(keyword);
-//        return ResponseEntity.ok(new ApiResponse<>(true, "Materials fetched", list));
-//    }
-    // REPLACE the existing @GetMapping("/search") method with this:
-
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<Material>>> searchMaterials(
-            @RequestParam(required = false, defaultValue = "") String keyword) {
-        return Optional.of(keyword)
-                .map(materialService::searchMaterials)
-                .map(results -> ResponseEntity.ok(
-                        new ApiResponse<>(true, "Materials fetched", results)))
-                .orElseGet(() -> ResponseEntity.ok(
-                        new ApiResponse<>(true, "No materials found", Collections.emptyList())));
+    public ResponseEntity<ApiResponse<List<Material>>> searchByTag(@RequestParam String keyword) {
+        List<Material> list = materialService.searchMaterialsByTag(keyword);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Materials fetched", list));
     }
 
     @GetMapping("/course/{courseId}")
