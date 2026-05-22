@@ -166,7 +166,7 @@ public class CertificationServiceImpl implements CertificationService {
                         }
 
                         // ✅ TEMPORARY: Lowered passing score for testing
-                        if (score < 5.0) {
+                        if (score < 50.0) {
                             System.out.println("❌ Exam not passed, score: " + score);
                             return false;
                         }
@@ -353,8 +353,15 @@ public class CertificationServiceImpl implements CertificationService {
 //            String employeeName = extractEmployeeName(employeeInfo);
 //            String courseName = extractCourseName(courseInfo);
             // Extract first and last name separately from employeeInfo
-            String firstName = (String) employeeInfo.get("firstName");
-            String lastName = (String) employeeInfo.get("lastName");
+//            String firstName = (String) employeeInfo.get("firstName");
+//            String lastName = (String) employeeInfo.get("lastName");
+            String firstName = employeeInfo.get("firstName") != null
+                    ? employeeInfo.get("firstName").toString()
+                    : "Unknown";
+
+            String lastName = employeeInfo.get("lastName") != null
+                    ? employeeInfo.get("lastName").toString()
+                    : "";
             String courseName = extractCourseName(courseInfo);
 
 
@@ -514,7 +521,7 @@ public class CertificationServiceImpl implements CertificationService {
     @SuppressWarnings("unchecked")
     private Map<String, Object> fetchCourseInfo(Long courseId) {
         try {
-            String url = courseServiceUrl + "/courses/" + courseId;
+            String url = courseServiceUrl + "/api/courses/" + courseId;
             Map<String, Object> response = restTemplate.getForObject(url, Map.class);
             if (response != null && response.get("data") instanceof Map) {
                 return (Map<String, Object>) response.get("data");
@@ -536,7 +543,7 @@ public class CertificationServiceImpl implements CertificationService {
 
     private Integer getCourseProgress(Long employeeId, Long courseId) {
         try {
-            String url = courseServiceUrl + "/courses/enrollments/" + employeeId;
+            String url = courseServiceUrl + "/api/courses/enrollments/" + employeeId;
             System.out.println("🔗 Calling course service: " + url);
 
             Map<String, Object> response = restTemplate.getForObject(url, Map.class);
