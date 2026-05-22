@@ -2,7 +2,7 @@ package com.configserverllp.course_service.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,6 +36,11 @@ public class Enrollment {
 
     private Long rejectedBy;
     private LocalDateTime rejectedAt;
+
+    private LocalDate dueDate;
+
+    // ✅ NEW FIELD
+    private LocalDateTime lastReminderSentAt;
 
     public enum Status {
         PENDING_APPROVAL, APPROVED, REJECTED, IN_PROGRESS, COMPLETED
