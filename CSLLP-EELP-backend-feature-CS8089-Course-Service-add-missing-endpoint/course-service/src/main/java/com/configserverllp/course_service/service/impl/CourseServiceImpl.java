@@ -995,7 +995,9 @@ public class CourseServiceImpl implements CourseService {
     private void sendManagerNotification(Map<String, Object> employeeInfo, Course course,
                                          Enrollment enrollment, long daysSinceEnrollment) {
         try {
-            Long managerId = (Long) employeeInfo.get("managerId");
+//            Long managerId = (Long) employeeInfo.get("managerId");
+            Number managerIdNumber = (Number) employeeInfo.get("managerId");
+            Long managerId = managerIdNumber.longValue();
             if (managerId != null) {
                 String managerEmail = fetchUserEmail(managerId);
                 String employeeName = (String) employeeInfo.get("employeeName");
