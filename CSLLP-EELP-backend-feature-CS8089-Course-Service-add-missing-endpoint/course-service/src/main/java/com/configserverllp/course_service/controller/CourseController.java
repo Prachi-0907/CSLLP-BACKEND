@@ -227,7 +227,7 @@ public class CourseController {
             status.put("nextRun", LocalDateTime.now().plusDays(1).withHour(9).withMinute(0).withSecond(0));
             status.put("totalPendingReminders", pendingReminders.size());
             status.put("schedule", "Daily at 9:00 AM");
-            status.put("criteria", "Enrollments >15 days old with progress <50%");
+            status.put("criteria", "Enrollments >8 days old with progress <50%");
 
             return ResponseEntity.ok(ApiResponse.success("Reminder system status", status));
 
