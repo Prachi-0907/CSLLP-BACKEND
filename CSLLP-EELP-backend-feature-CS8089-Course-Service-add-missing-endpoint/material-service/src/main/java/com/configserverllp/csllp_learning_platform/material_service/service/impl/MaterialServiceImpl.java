@@ -101,9 +101,6 @@ public class MaterialServiceImpl implements MaterialService {
         return materialRepository.save(material);
     }
 
-    // MaterialServiceImpl.java
-
-    // MaterialServiceImpl.java
 
     @Override
     public Material updateMaterial(Long id, MaterialRequest request, MultipartFile file) {
@@ -116,7 +113,7 @@ public class MaterialServiceImpl implements MaterialService {
         existing.setType(request.getType() != null ? request.getType() : existing.getType());
         existing.setCourseId(request.getCourseId() != null ? request.getCourseId() : existing.getCourseId());
 
-        // ✅ Replace file if a new file is provided
+        // Replace file if a new file is provided
         if (file != null && !file.isEmpty()) {
             String type = request.getType() != null ? request.getType() : existing.getType();
             String relativePath = storeFile(file, type);
