@@ -124,12 +124,22 @@ public class CourseServiceImpl implements CourseService {
                     }
 
                     // Create enrollment for each employee
+//                    Enrollment enrollment = Enrollment.builder()
+//                            .courseId(course.getId())
+//                            .employeeId(employeeId)
+//                            .progress(0)
+//                            .enrolledAt(LocalDateTime.now())
+//                            .status(Enrollment.Status.APPROVED) // Auto-approve mandatory courses
+//                            .build();
                     Enrollment enrollment = Enrollment.builder()
                             .courseId(course.getId())
                             .employeeId(employeeId)
                             .progress(0)
                             .enrolledAt(LocalDateTime.now())
-                            .status(Enrollment.Status.APPROVED) // Auto-approve mandatory courses
+                            .dueDate(LocalDate.now().plusDays(30)) // ✅ ADD THIS
+                            .status(course.isPaid()
+                                    ? Enrollment.Status.PENDING_APPROVAL
+                                    : Enrollment.Status.APPROVED)
                             .build();
 
                     enrollmentRepository.save(enrollment);
@@ -776,24 +786,36 @@ public class CourseServiceImpl implements CourseService {
             logger.info("🔄 [AUTOMATIC] Starting daily progress reminders check...");
 
             List<Enrollment> allEnrollments = enrollmentRepository.findAll();
+            logger.info("Autoreminder 1");
             LocalDateTime fifteenDaysAgo = LocalDateTime.now().minusDays(8);
+            logger.info("Autoreminder 2");
 
             int remindersSent = 0;
+            logger.info("Autoreminder 3");
             int eligibleEnrollments = 0;
+            logger.info("Autoreminder 4");
 
             for (Enrollment enrollment : allEnrollments) {
+                logger.info("Autoreminder 5");
                 // Check if enrollment meets criteria for reminder
                 if (shouldSendReminder(enrollment, fifteenDaysAgo)
                         && shouldSendReminderAgain(enrollment)) {
+                    logger.info("Autoreminder 6");
                     eligibleEnrollments++;
                     try {
+                        logger.info("Autoreminder 7");
                         sendAutomaticReminderForEnrollment(enrollment.getId());
+                        logger.info("Autoreminder 8");
                         // ✅ Save reminder timestamp
                         enrollment.setLastReminderSentAt(LocalDateTime.now());
+                        logger.info("Autoreminder 9");
 
                         enrollmentRepository.save(enrollment);
+                        logger.info("Autoreminder 10");
                         remindersSent++;
+                        logger.info("Autoreminder 11");
                         logger.info("✅ [AUTOMATIC] Sent reminder for enrollment ID: {}", enrollment.getId());
+                        logger.info("Autoreminder 12");
 
                         // Small delay to avoid overwhelming email service
 //                        Thread.sleep(50);
@@ -803,21 +825,50 @@ public class CourseServiceImpl implements CourseService {
                     }
                 }
             }
-
+            logger.info("Autoreminder 13");
             logger.info("🎉 [AUTOMATIC] Daily reminders completed: {} sent out of {} eligible enrollments",
                     remindersSent,
                     eligibleEnrollments);
+            logger.info("Autoreminder 14");
 
         } catch (Exception e) {
             logger.error("💥 [AUTOMATIC] Error in automatic progress reminders", e);
             e.printStackTrace();
+            logger.info("Autoreminder 15");
         }
+    }
+
+    /**
+     * Helper method to check if reminder should be sent for an enrollment
+     */
+//    private boolean shouldSendReminder(Enrollment enrollment, LocalDateTime fifteenDaysAgo) {
+//        return enrollment.getEnrolledAt() != null &&
+//                enrollment.getEnrolledAt().isBefore(fifteenDaysAgo) &&
+//                enrollment.getProgress() < 50 &&
+//                (enrollment.getStatus() == Enrollment.Status.APPROVED ||
+//                        enrollment.getStatus() == Enrollment.Status.IN_PROGRESS);
+//    }
+    private boolean shouldSendReminder(Enrollment enrollment,
+                                       LocalDateTime fifteenDaysAgo) {
+
+        // Case 1: Not started within 8 days
+        boolean notStarted =
+                enrollment.getProgress() == 0 &&
+                        enrollment.getEnrolledAt().isBefore(fifteenDaysAgo);
+
+        // Case 2: Due date crossed but incomplete
+        boolean overdue =
+                enrollment.getDueDate() != null &&
+                        enrollment.getDueDate().isBefore(LocalDate.now()) &&
+                        enrollment.getProgress() < 100;
+
+        return notStarted || overdue;
     }
 
     private boolean shouldSendReminderAgain(Enrollment enrollment) {
         return enrollment.getLastReminderSentAt() == null
                 || enrollment.getLastReminderSentAt()
-                .isBefore(LocalDateTime.now().minusDays(8));
+                .isBefore(LocalDateTime.now().minusDays(1));
     }
 
     private static final Logger logger =
@@ -896,33 +947,6 @@ public class CourseServiceImpl implements CourseService {
     }
 
     /**
-     * Helper method to check if reminder should be sent for an enrollment
-     */
-//    private boolean shouldSendReminder(Enrollment enrollment, LocalDateTime fifteenDaysAgo) {
-//        return enrollment.getEnrolledAt() != null &&
-//                enrollment.getEnrolledAt().isBefore(fifteenDaysAgo) &&
-//                enrollment.getProgress() < 50 &&
-//                (enrollment.getStatus() == Enrollment.Status.APPROVED ||
-//                        enrollment.getStatus() == Enrollment.Status.IN_PROGRESS);
-//    }
-    private boolean shouldSendReminder(Enrollment enrollment,
-                                       LocalDateTime fifteenDaysAgo) {
-
-        // Case 1: Not started within 8 days
-        boolean notStarted =
-                enrollment.getProgress() == 0 &&
-                        enrollment.getEnrolledAt().isBefore(fifteenDaysAgo);
-
-        // Case 2: Due date crossed but incomplete
-        boolean overdue =
-                enrollment.getDueDate() != null &&
-                        enrollment.getDueDate().isBefore(LocalDate.now()) &&
-                        enrollment.getProgress() < 100;
-
-        return notStarted || overdue;
-    }
-
-    /**
      * Send automatic reminder email to employee
      */
     private void sendAutomaticReminderEmail(Map<String, Object> employeeInfo, Course course,
@@ -960,12 +984,26 @@ public class CourseServiceImpl implements CourseService {
         message.append("(").append(daysSinceEnrollment).append(" days ago), ");
         message.append("but your progress is currently at ").append(enrollment.getProgress()).append("%.\n\n");
 
-        if (enrollment.getProgress() == 0) {
-            message.append("🔸 You haven't started this course yet.\n");
-            message.append("🔸 Starting early helps in better learning and completion.\n\n");
-        } else {
-            message.append("🔸 Your progress is below 50%.\n");
-            message.append("🔸 Continuing regularly will help you complete the course successfully.\n\n");
+//        if (enrollment.getProgress() == 0) {
+//            message.append("🔸 You haven't started this course yet.\n");
+//            message.append("🔸 Starting early helps in better learning and completion.\n\n");
+//        } else {
+//            message.append("🔸 Your progress is below 50%.\n");
+//            message.append("🔸 Continuing regularly will help you complete the course successfully.\n\n");
+//        }
+        boolean overdue =
+                enrollment.getDueDate() != null &&
+                        enrollment.getDueDate().isBefore(LocalDate.now()) &&
+                        enrollment.getProgress() < 100;
+        if (overdue) {
+
+            message.append("⚠️ Your course due date has passed.\n");
+            message.append("⚠️ Please complete the course immediately.\n\n");
+
+        } else if (enrollment.getProgress() == 0) {
+
+            message.append("🔸 You have not started this course within 8 days.\n");
+            message.append("🔸 Please start the course as soon as possible.\n\n");
         }
 
         message.append("**Action Required:**\n");
